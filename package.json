@@ -9,12 +9,14 @@
     "build": "tsc",
     "lint": "eslint ./src",
     "preconstruct:fix": "preconstruct fix",
-    "preconstruct:build": "preconstruct build"
+    "preconstruct:build": "preconstruct build",
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.6",
     "@babel/preset-typescript": "^7.18.6",
     "@preconstruct/cli": "^2.1.7",
+    "@types/jest": "^28.1.4",
     "@types/node": "^18.0.1",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.30.5",
@@ -24,8 +26,10 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.1",
+    "jest": "^28.1.2",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
+    "ts-jest": "^28.0.5",
     "typescript": "^4.7.4"
   }
 }
