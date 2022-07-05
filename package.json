@@ -1,0 +1,23 @@
+{
+  "name": "rogue-ts",
+  "version": "0.0.1",
+  "main": "dist/rogue-ts.cjs.js",
+  "license": "MIT",
+  "dependencies": {},
+  "module": "dist/rogue-ts.esm.js",
+  "scripts": {
+    "lint": "eslint ./src",
+    "preconstruct:fix": "preconstruct fix",
+    "preconstruct:build": "preconstruct build"
+  },
+  "devDependencies": {
+    "@preconstruct/cli": "^2.1.7",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1",
+    "typescript": "^4.7.4"
+  }
+}
