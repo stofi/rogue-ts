@@ -1,11 +1,4 @@
-import { Player, Monster, Drop, Item, Level, Tile } from './Models';
-import type { Action, Actor, Entity, Breed } from './Models';
-/**
- * TODO:
- * Ideally everything on Models should be an interface.
- * Classes that implement these interfaces should be in a separate directory.
- *
- *
- */
-export { Player, Monster, Drop, Item, Level, Tile };
-export type { Action, Actor, Entity, Breed };
+import type { IAction, IEntity, IBreed, IPlayer, IMonster, IItem, ILevel, ITile, ITileContent } from './Models';
+import { Level, Monster, Player, Tile, Item } from './Game';
+export type { IAction, IEntity, IBreed, IPlayer, IMonster, IItem, ITile, ILevel, ITileContent, };
+export { Level, Monster, Player, Tile, Item };

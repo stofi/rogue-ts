@@ -1,4 +1,4 @@
-import Item from '../../Item';
+import type Item from '../../IItem';
 export default interface Breed {
     name: string;
     maxHealth: number;
