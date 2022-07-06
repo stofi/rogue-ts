@@ -7,6 +7,7 @@ interface ChildLevel {
   w: number
   h: number
   level: Level
+  active: boolean
 }
 
 interface TileContent {
@@ -30,6 +31,44 @@ export default class Level {
     if (height < 1) {
       throw new Error('height must be greater than 0')
     }
+  }
+
+  public get activeChild(): ChildLevel | undefined {
+    for (const child of this.children) {
+      if (child.active) {
+        return child
+      }
+    }
+    return undefined
+  }
+  public set activeChild(child: ChildLevel | undefined) {
+    for (const c of this.children) {
+      c.active = c === child
+    }
+  }
+
+  public deactiveChild(): void {
+    for (const child of this.children) {
+      if (child.active) {
+        child.active = false
+      }
+    }
+  }
+
+  /**
+   * Return an array of all active child levels, in order of their appearance in the
+   * tree.
+   * @returns An array of all the active child levels.
+   */
+  public getActiveChildStack(): Level[] {
+    const stack: Level[] = []
+    for (const child of this.children) {
+      if (child.active) {
+        stack.push(child.level)
+        stack.push(...child.level.getActiveChildStack())
+      }
+    }
+    return stack
   }
 
   public getTile(x: number, y: number): Tile {
@@ -67,12 +106,18 @@ export default class Level {
     if (y < 0 || y + height > this.height) {
       throw new Error('y must be between 0 and height')
     }
+    const otherChildLevelAtTile = this.getChildAt(x, y)
+    if (otherChildLevelAtTile) {
+      throw new Error('cannot add child at tile that already has a child')
+    }
+
     this.children.push({
       x,
       y,
       w: width,
       h: height,
       level,
+      active: false,
     })
   }
 
