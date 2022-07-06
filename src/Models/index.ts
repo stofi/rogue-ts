@@ -9,6 +9,7 @@ import type ITile from './ITile'
 import type IAction from './IAction'
 import type IEntity from './IEntity'
 import type IBreed from './IEntity/IMonster/IBreed'
+import type ITileType from './Itile/ITileType'
 
 export type {
   IAction,
@@ -21,4 +22,5 @@ export type {
   ILevel,
   ITileContent,
   ISession,
+  ITileType,
 }

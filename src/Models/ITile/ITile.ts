@@ -1,1 +1,5 @@
-export default class ITile {}
+import ITypeType from './ITileType'
+
+export default interface ITile {
+  type: ITypeType
+}

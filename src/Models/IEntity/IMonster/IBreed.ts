@@ -1,8 +1,8 @@
-import type Item from '../../IItem'
+import type IItem from '../../IItem'
 
-export default interface Breed {
+export default interface IBreed {
   name: string
   maxHealth: number
-  items: Item[]
-  loot: Item[]
+  items: IItem[]
+  loot: IItem[]
 }
