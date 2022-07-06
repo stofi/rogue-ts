@@ -1,4 +1,22 @@
-import { Session } from '@/Game'
+import { Session, Level } from '@/Game'
+import type { IPlayer, IAction } from '@/Models'
+
+const dummyAction: IAction = {
+  use() {
+    return {
+      success: true,
+    }
+  },
+}
+const dummyLevel = new Level(10, 10, [])
+const dummyPlayer: IPlayer = {
+  isAlive: true,
+  isPlayer: true,
+  name: 'dummy',
+  x: 0,
+  y: 0,
+  takeTurn: async () => dummyAction,
+}
 
 describe('testing Session', () => {
   test('it should import', () => {
@@ -8,5 +26,26 @@ describe('testing Session', () => {
   test('it should be a class', () => {
     const result = typeof Session
     expect(result).toBe('function')
+  })
+  test('it should construct', () => {
+    const result = new Session(dummyLevel, dummyPlayer)
+    expect(result).toBeInstanceOf(Session)
+  })
+  test('it should have a root level', () => {
+    const result = new Session(dummyLevel, dummyPlayer)
+    expect(result.root).toBe(dummyLevel)
+  })
+  test('it should have a player', () => {
+    const result = new Session(dummyLevel, dummyPlayer)
+    expect(result.player).toBe(dummyPlayer)
+  })
+  test('it should have an active level', () => {
+    const result = new Session(dummyLevel, dummyPlayer)
+    expect(result.activeLevel).toBe(dummyLevel)
+  })
+  test('it should take turn without throwing', async () => {
+    const result = new Session(dummyLevel, dummyPlayer)
+    const turnPromise = result.takeTurn()
+    await expect(turnPromise).resolves.toBeUndefined()
   })
 })
