@@ -1,12 +1,12 @@
-import { Tile } from '@/Game'
+import { Breed } from '@/Game'
 
-describe('testing Tile', () => {
+describe('testing Breed', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)
   })
   test('it should be a class', () => {
-    const result = typeof Tile
+    const result = typeof Breed
     expect(result).toBe('function')
   })
 })

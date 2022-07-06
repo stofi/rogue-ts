@@ -1,4 +1,4 @@
-import { Tile } from '@/Game'
+import { TileType } from '@/Game'
 
 describe('testing Tile', () => {
   test('it should import', () => {
@@ -6,7 +6,7 @@ describe('testing Tile', () => {
     expect(result).toBe(0)
   })
   test('it should be a class', () => {
-    const result = typeof Tile
+    const result = typeof TileType
     expect(result).toBe('function')
   })
 })

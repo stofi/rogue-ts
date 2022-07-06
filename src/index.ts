@@ -12,7 +12,16 @@ import type {
   ITileType,
 } from './Models'
 
-import { Level, Monster, Player, Tile, Item, Breed, TileType } from './Game'
+import {
+  Level,
+  Monster,
+  Player,
+  Tile,
+  Item,
+  Breed,
+  TileType,
+  Session,
+} from './Game'
 
 export type {
   IAction,
@@ -28,4 +37,4 @@ export type {
   ITileType,
 }
 
-export { Level, Monster, Player, Tile, Item, Breed, TileType }
+export { Level, Monster, Player, Tile, Item, Breed, TileType, Session }
