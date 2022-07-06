@@ -24,4 +24,8 @@ describe('testing Item', () => {
     const item = new Item('item', dummyAction, dummyAction, dummyAction)
     expect(item).toBeInstanceOf(Item)
   })
+  test('it should have a name', () => {
+    const item = new Item('item')
+    expect(item.name).toBe('item')
+  })
 })

@@ -28,15 +28,18 @@ export default class Level implements ILevel {
       throw new Error('child is not a child of this level')
     }
     return {
-      x: x + child.x,
-      y: y + child.y,
+      x: x - child.x,
+      y: y - child.y,
     }
   }
   public translateForParent(x: number, y: number): { x: number; y: number } {
     if (!this.parent) {
       return { x, y }
     }
-    return this.parent.translateForChild(x, y, this)
+    return {
+      x: x + this.x,
+      y: y + this.y,
+    }
   }
 
   public get activeChild(): ILevel | undefined {
@@ -86,14 +89,40 @@ export default class Level implements ILevel {
     return stack.length ? stack[stack.length - 1] : this
   }
 
-  public getTile(x: number, y: number): ITile {
+  public getTile(x: number, y: number, deep = false): ITile | undefined {
     if (x < 0 || x >= this.width) {
       throw new Error('x must be between 0 and width')
     }
     if (y < 0 || y >= this.height) {
       throw new Error('y must be between 0 and height')
     }
-    return this.tiles[y * this.width + x]
+    // is target in a child level?
+    const child = this.getChildAt(x, y)
+    if (child) {
+      if (deep) {
+        return child.getTile(x - child.x, y - child.y, deep)
+      }
+    } else {
+      return this.tiles[y * this.width + x]
+    }
+  }
+
+  public setTile(x: number, y: number, tile: ITile, deep = false): void {
+    if (x < 0 || x >= this.width) {
+      throw new Error('x must be between 0 and width')
+    }
+    if (y < 0 || y >= this.height) {
+      throw new Error('y must be between 0 and height')
+    }
+    // is target in a child level?
+    const child = this.getChildAt(x, y)
+    if (child) {
+      if (deep) {
+        child.setTile(x - child.x, y - child.y, tile, deep)
+      }
+    } else {
+      this.tiles[y * this.width + x] = tile
+    }
   }
 
   public getChildAt(x: number, y: number): ILevel | undefined {

@@ -1,5 +1,7 @@
 import type { IAction, IItem } from '~/Models'
 
+// TODO: Implement Typed Object?
+
 export default class Item implements IItem {
   drawAction?: IAction | undefined
   playAction?: IAction | undefined
