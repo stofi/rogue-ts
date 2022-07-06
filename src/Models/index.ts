@@ -7,13 +7,11 @@ import type { IChildLevel, ITileContent } from './ILevel'
 
 import type ITile from './ITile'
 import type IAction from './IAction'
-import type IActor from './IActor'
 import type IEntity from './IEntity'
 import type IBreed from './IEntity/IMonster/IBreed'
 
 export type {
   IAction,
-  IActor,
   IEntity,
   IBreed,
   IPlayer,

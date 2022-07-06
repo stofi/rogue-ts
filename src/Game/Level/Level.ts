@@ -99,7 +99,7 @@ export default class Level implements ILevel {
     if (otherChildLevelAtTile) {
       throw new Error('cannot add child at tile that already has a child')
     }
-
+    console.log('adding child', level)
     this.children.push({
       x,
       y,

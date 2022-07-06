@@ -1,6 +1,5 @@
 import type {
   IAction,
-  IActor,
   IEntity,
   IBreed,
   IPlayer,
@@ -17,7 +16,6 @@ import { Level, Drop, Monster, Player, Tile, Item } from './Game'
 
 export type {
   IAction,
-  IActor,
   IEntity,
   IBreed,
   IPlayer,
