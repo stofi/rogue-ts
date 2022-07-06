@@ -9,14 +9,11 @@ import type {
   IItem,
   ILevel,
   ITile,
+  IChildLevel,
+  ITileContent,
 } from './Models'
-/**
- * TODO:
- * Ideally everything on Models should be an interface.
- * Classes that implement these interfaces should be in a separate directory.
- *
- *
- */
+
+import { Level, Drop, Monster, Player, Tile, Item } from './Game'
 
 export type {
   IAction,
@@ -29,4 +26,8 @@ export type {
   IItem,
   ILevel,
   ITile,
+  IChildLevel,
+  ITileContent,
 }
+
+export { Level, Drop, Monster, Player, Tile, Item }

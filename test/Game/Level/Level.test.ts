@@ -1,6 +1,6 @@
-import Level from '~/Models/ILevel'
+import { Level } from '@/Game'
 
-describe('testing Models/Level', () => {
+describe('testing Level', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)

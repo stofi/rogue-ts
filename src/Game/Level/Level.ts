@@ -1,39 +1,28 @@
-import type Tile from '../Tile'
-import type Entity from '../IEntity'
+import type {
+  ILevel,
+  IChildLevel,
+  ITileContent,
+  ITile,
+  IEntity,
+} from '~/Models'
 
-interface ChildLevel {
-  x: number
-  y: number
-  w: number
-  h: number
-  level: Level
-  active: boolean
-}
-
-interface TileContent {
-  tile: Tile
-  entities: Entity[]
-  x: number
-  y: number
-}
-
-export default class Level {
-  entities: Entity[] = []
-  children: ChildLevel[] = []
-  constructor(
-    public width: number,
-    public height: number,
-    public tiles: Tile[]
-  ) {
+export default class Level implements ILevel {
+  width: number
+  height: number
+  children: IChildLevel[] = []
+  entities: IEntity[] = []
+  constructor(width: number, height: number, public tiles: ITile[]) {
     if (width < 1) {
       throw new Error('width must be greater than 0')
     }
     if (height < 1) {
       throw new Error('height must be greater than 0')
     }
+    this.width = width
+    this.height = height
   }
 
-  public get activeChild(): ChildLevel | undefined {
+  public get activeChild(): IChildLevel | undefined {
     for (const child of this.children) {
       if (child.active) {
         return child
@@ -41,7 +30,7 @@ export default class Level {
     }
     return undefined
   }
-  public set activeChild(child: ChildLevel | undefined) {
+  public set activeChild(child: IChildLevel | undefined) {
     for (const c of this.children) {
       c.active = c === child
     }
@@ -60,8 +49,8 @@ export default class Level {
    * tree.
    * @returns An array of all the active child levels.
    */
-  public getActiveChildStack(): Level[] {
-    const stack: Level[] = []
+  public getActiveChildStack(): ILevel[] {
+    const stack: ILevel[] = []
     for (const child of this.children) {
       if (child.active) {
         stack.push(child.level)
@@ -71,7 +60,7 @@ export default class Level {
     return stack
   }
 
-  public getTile(x: number, y: number): Tile {
+  public getTile(x: number, y: number): ITile {
     if (x < 0 || x >= this.width) {
       throw new Error('x must be between 0 and width')
     }
@@ -81,7 +70,7 @@ export default class Level {
     return this.tiles[y * this.width + x]
   }
 
-  public getChildAt(x: number, y: number): ChildLevel | undefined {
+  public getChildAt(x: number, y: number): IChildLevel | undefined {
     for (const child of this.children) {
       if (
         x >= child.x &&
@@ -95,7 +84,7 @@ export default class Level {
     return undefined
   }
 
-  public addChild(x: number, y: number, level: Level): void {
+  public addChild(x: number, y: number, level: ILevel): void {
     const width = level.width
     const height = level.height
     // x must be >= 0 and x + width must be <= this.width
@@ -121,7 +110,7 @@ export default class Level {
     })
   }
 
-  public getTileContent(x: number, y: number): TileContent | undefined {
+  public getTileContent(x: number, y: number): ITileContent | undefined {
     const child = this.getChildAt(x, y)
     if (child) {
       return child.level.getTileContent(x - child.x, y - child.y)
@@ -129,7 +118,7 @@ export default class Level {
     // entities
     const tile = this.getTile(x, y)
 
-    const entities: Entity[] = this.entities.filter(
+    const entities: IEntity[] = this.entities.filter(
       (entity) => entity.x === x && entity.y === y
     )
     return {

@@ -1,9 +1,8 @@
-import Drop from '~/Models/IEntity/IDrop'
-import Item from '~/Models/IItem'
+import { Drop, Item } from '@/Game'
 
 const dummyItem: Item = new Item('dummy')
 
-describe('testing Models/Entity/Drop', () => {
+describe('testing Drop', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)

@@ -1,6 +1,6 @@
-import Player from '~/Models/IEntity/IPlayer'
+import { Player } from '@/Game'
 
-describe('testing Models/Entity/Player', () => {
+describe('testing Player', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)

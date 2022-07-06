@@ -1,5 +1,4 @@
-import { Player, Monster, Drop, Item, Level, Tile } from '../src'
-import type { Action, Actor, Entity, Breed } from '../src'
+export {}
 
 describe('testing index file', () => {
   test('it should import', () => {

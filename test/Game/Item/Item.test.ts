@@ -1,7 +1,7 @@
-import Item from '~/Models/IItem'
-import Action from '~/Models/IAction'
+import { Item } from '@/Game'
+import type { IAction } from '@/Models'
 
-const dummyAction: Action = {
+const dummyAction: IAction = {
   use: () => {
     return {
       success: true,
@@ -11,7 +11,7 @@ const dummyAction: Action = {
   },
 }
 
-describe('testing Models/Item', () => {
+describe('testing Item', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)

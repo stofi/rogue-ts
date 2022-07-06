@@ -1,14 +1,14 @@
-import Monster from '~/Models/IEntity/IMonster'
-import Breed from '~/Models/IEntity/IMonster/Breed'
+import { Monster } from '@/Game'
+import type { IBreed } from '@/Models'
 
-const dummyBreed: Breed = {
+const dummyBreed: IBreed = {
   name: 'dummy',
   maxHealth: 10,
   items: [],
   loot: [],
 }
 
-describe('testing Models/Entity/Monster', () => {
+describe('testing Monster', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)
