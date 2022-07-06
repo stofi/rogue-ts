@@ -1,14 +1,23 @@
-import Player from './Entity/Player'
-import Monster from './Entity/Monster'
-import Drop from './Entity/Drop'
-import Item from './Item'
-import Level from './Level'
-import Tile from './Tile'
+import type IPlayer from './IEntity/IPlayer'
+import type IMonster from './IEntity/IMonster'
+import type IDrop from './IEntity/IDrop'
+import type IItem from './IItem'
+import type ILevel from './ILevel'
+import type ITile from './ITile'
+import type IAction from './IAction'
+import type IActor from './IActor'
+import type IEntity from './IEntity'
+import type IBreed from './IEntity/IMonster/IBreed'
 
-import type Action from './Action'
-import type Actor from './Actor'
-import type Entity from './Entity'
-import type Breed from './Entity/Monster/Breed'
-
-export { Player, Monster, Drop, Item, Level, Tile }
-export type { Action, Actor, Entity, Breed }
+export type {
+  IAction,
+  IActor,
+  IEntity,
+  IBreed,
+  IPlayer,
+  IMonster,
+  IDrop,
+  IItem,
+  ILevel,
+  ITile,
+}

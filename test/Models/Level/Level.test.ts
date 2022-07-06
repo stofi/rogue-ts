@@ -1,4 +1,4 @@
-import Level from '@/Models/Level'
+import Level from '~/Models/ILevel'
 
 describe('testing Models/Level', () => {
   test('it should import', () => {

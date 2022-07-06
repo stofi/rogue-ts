@@ -1,4 +1,4 @@
-import Player from '@/Models/Entity/Player'
+import Player from '~/Models/IEntity/IPlayer'
 
 describe('testing Models/Entity/Player', () => {
   test('it should import', () => {

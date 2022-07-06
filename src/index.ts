@@ -1,5 +1,15 @@
-import { Player, Monster, Drop, Item, Level, Tile } from './Models'
-import type { Action, Actor, Entity, Breed } from './Models'
+import type {
+  IAction,
+  IActor,
+  IEntity,
+  IBreed,
+  IPlayer,
+  IMonster,
+  IDrop,
+  IItem,
+  ILevel,
+  ITile,
+} from './Models'
 /**
  * TODO:
  * Ideally everything on Models should be an interface.
@@ -8,5 +18,15 @@ import type { Action, Actor, Entity, Breed } from './Models'
  *
  */
 
-export { Player, Monster, Drop, Item, Level, Tile }
-export type { Action, Actor, Entity, Breed }
+export type {
+  IAction,
+  IActor,
+  IEntity,
+  IBreed,
+  IPlayer,
+  IMonster,
+  IDrop,
+  IItem,
+  ILevel,
+  ITile,
+}

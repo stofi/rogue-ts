@@ -1,4 +1,4 @@
-import Tile from '@/Models/Tile'
+import Tile from '~/Models/ITile'
 
 describe('testing Models/Tile', () => {
   test('it should import', () => {

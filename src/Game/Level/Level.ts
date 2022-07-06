@@ -1,5 +1,5 @@
 import type Tile from '../Tile'
-import type Entity from '../Entity'
+import type Entity from '../IEntity'
 
 interface ChildLevel {
   x: number

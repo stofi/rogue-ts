@@ -1,5 +1,5 @@
-import Drop from '@/Models/Entity/Drop'
-import Item from '@/Models/Item'
+import Drop from '~/Models/IEntity/IDrop'
+import Item from '~/Models/IItem'
 
 const dummyItem: Item = new Item('dummy')
 

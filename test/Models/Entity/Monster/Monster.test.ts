@@ -1,5 +1,5 @@
-import Monster from '@/Models/Entity/Monster'
-import Breed from '@/Models/Entity/Monster/Breed'
+import Monster from '~/Models/IEntity/IMonster'
+import Breed from '~/Models/IEntity/IMonster/Breed'
 
 const dummyBreed: Breed = {
   name: 'dummy',

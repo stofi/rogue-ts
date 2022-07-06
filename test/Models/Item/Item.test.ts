@@ -1,5 +1,5 @@
-import Item from '@/Models/Item'
-import Action from '@/Models/Action'
+import Item from '~/Models/IItem'
+import Action from '~/Models/IAction'
 
 const dummyAction: Action = {
   use: () => {
