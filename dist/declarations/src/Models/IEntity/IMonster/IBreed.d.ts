@@ -1,7 +1,7 @@
-import type Item from '../../IItem';
-export default interface Breed {
+import type IItem from '../../IItem';
+export default interface IBreed {
     name: string;
     maxHealth: number;
-    items: Item[];
-    loot: Item[];
+    items: IItem[];
+    loot: IItem[];
 }

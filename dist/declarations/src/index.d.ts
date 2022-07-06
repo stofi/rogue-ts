@@ -1,4 +1,4 @@
-import type { IAction, IEntity, IBreed, IPlayer, IMonster, IItem, ILevel, ITile, ITileContent } from './Models';
-import { Level, Monster, Player, Tile, Item } from './Game';
-export type { IAction, IEntity, IBreed, IPlayer, IMonster, IItem, ITile, ILevel, ITileContent, };
-export { Level, Monster, Player, Tile, Item };
+import type { IAction, IEntity, IBreed, IPlayer, IMonster, IItem, ILevel, ITile, ITileContent, ISession, ITileType } from './Models';
+import { Level, Monster, Player, Tile, Item, Breed, TileType, Session } from './Game';
+export type { IAction, IEntity, IBreed, IPlayer, IMonster, IItem, ITile, ILevel, ITileContent, ISession, ITileType, };
+export { Level, Monster, Player, Tile, Item, Breed, TileType, Session };

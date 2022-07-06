@@ -21,7 +21,13 @@ export default class Session implements ISession {
       throw new Error('No active level')
     }
     for (const entity of level.entities) {
-      await entity.takeTurn(level)
+      const action = await entity.takeTurn(level)
+      const result = action.use(entity)
+      console.log(
+        `${entity.name} used ${action.name} ${
+          result.success ? 'successfully' : 'unsuccessfully'
+        }${result.reason ? `: ${result.reason}` : ''}`
+      )
     }
     // have any entities entered a child level?
     // loop over the list of entities backwards so that we can remove entities

@@ -166,8 +166,8 @@ var Level = /*#__PURE__*/function () {
       }
 
       return {
-        x: x + child.x,
-        y: y + child.y
+        x: x - child.x,
+        y: y - child.y
       };
     }
   }, {
@@ -180,7 +180,10 @@ var Level = /*#__PURE__*/function () {
         };
       }
 
-      return this.parent.translateForChild(x, y, this);
+      return {
+        x: x + this.x,
+        y: y + this.y
+      };
     }
   }, {
     key: "activeChild",
@@ -284,15 +287,50 @@ var Level = /*#__PURE__*/function () {
   }, {
     key: "getTile",
     value: function getTile(x, y) {
+      var deep = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
       if (x < 0 || x >= this.width) {
         throw new Error('x must be between 0 and width');
       }
 
       if (y < 0 || y >= this.height) {
         throw new Error('y must be between 0 and height');
+      } // is target in a child level?
+
+
+      var child = this.getChildAt(x, y);
+
+      if (child) {
+        if (deep) {
+          return child.getTile(x - child.x, y - child.y, deep);
+        }
+      } else {
+        return this.tiles[y * this.width + x];
+      }
+    }
+  }, {
+    key: "setTile",
+    value: function setTile(x, y, tile) {
+      var deep = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+      if (x < 0 || x >= this.width) {
+        throw new Error('x must be between 0 and width');
       }
 
-      return this.tiles[y * this.width + x];
+      if (y < 0 || y >= this.height) {
+        throw new Error('y must be between 0 and height');
+      } // is target in a child level?
+
+
+      var child = this.getChildAt(x, y);
+
+      if (child) {
+        if (deep) {
+          child.setTile(x - child.x, y - child.y, tile, deep);
+        }
+      } else {
+        this.tiles[y * this.width + x] = tile;
+      }
     }
   }, {
     key: "getChildAt",
@@ -369,10 +407,20 @@ var Level = /*#__PURE__*/function () {
   return Level;
 }();
 
-var Tile = /*#__PURE__*/_createClass(function Tile() {
+var Tile = /*#__PURE__*/_createClass(function Tile(type) {
   _classCallCheck(this, Tile);
+
+  this.type = type;
 });
 
+var TileType = /*#__PURE__*/_createClass(function TileType(name, passable) {
+  _classCallCheck(this, TileType);
+
+  this.name = name;
+  this.passable = passable;
+});
+
+// TODO: Implement Typed Object?
 var Item = /*#__PURE__*/_createClass(function Item(name, drawAction, playAction, discardAction) {
   _classCallCheck(this, Item);
 
@@ -768,6 +816,201 @@ function _asyncToGenerator(fn) {
   };
 }
 
+var Session = /*#__PURE__*/function () {
+  function Session(root, player) {
+    _classCallCheck(this, Session);
+
+    this.root = root;
+    this.player = player;
+
+    if (!root) {
+      throw new Error('level must be provided');
+    }
+
+    this.root.entities.push(player);
+  }
+
+  _createClass(Session, [{
+    key: "activeLevel",
+    get: function get() {
+      var _this$root$getDeepest;
+
+      return (_this$root$getDeepest = this.root.getDeepestActiveChild()) !== null && _this$root$getDeepest !== void 0 ? _this$root$getDeepest : this.root;
+    }
+    /**
+     * Make a turn in the game.
+     */
+
+  }, {
+    key: "takeTurn",
+    value: function () {
+      var _takeTurn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+        var level, _iterator, _step, _entity2, action, result, i, entity, x, y, childLevel, _i, _entity, _x, _y, parentLevel;
+
+        return _regeneratorRuntime().wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                level = this.activeLevel;
+
+                if (level) {
+                  _context.next = 3;
+                  break;
+                }
+
+                throw new Error('No active level');
+
+              case 3:
+                _iterator = _createForOfIteratorHelper(level.entities);
+                _context.prev = 4;
+
+                _iterator.s();
+
+              case 6:
+                if ((_step = _iterator.n()).done) {
+                  _context.next = 15;
+                  break;
+                }
+
+                _entity2 = _step.value;
+                _context.next = 10;
+                return _entity2.takeTurn(level);
+
+              case 10:
+                action = _context.sent;
+                result = action.use(_entity2);
+                console.log("".concat(_entity2.name, " used ").concat(action.name, " ").concat(result.success ? 'successfully' : 'unsuccessfully').concat(result.reason ? ": ".concat(result.reason) : ''));
+
+              case 13:
+                _context.next = 6;
+                break;
+
+              case 15:
+                _context.next = 20;
+                break;
+
+              case 17:
+                _context.prev = 17;
+                _context.t0 = _context["catch"](4);
+
+                _iterator.e(_context.t0);
+
+              case 20:
+                _context.prev = 20;
+
+                _iterator.f();
+
+                return _context.finish(20);
+
+              case 23:
+                i = level.entities.length - 1;
+
+              case 24:
+                if (!(i >= 0)) {
+                  _context.next = 38;
+                  break;
+                }
+
+                entity = level.entities[i]; // get its position
+
+                x = entity.x, y = entity.y; // get the child level at that position
+
+                childLevel = level.getChildAt(x, y);
+
+                if (childLevel) {
+                  _context.next = 30;
+                  break;
+                }
+
+                return _context.abrupt("continue", 35);
+
+              case 30:
+                // remove the entity from the level
+                level.entities.splice(i, 1); // change coordinates to the child level
+
+                entity.x = x - childLevel.x;
+                entity.y = y - childLevel.y; // add the entity to the child level
+
+                childLevel.entities.push(entity);
+
+                if (entity.isPlayer) {
+                  childLevel.active = true;
+                }
+
+              case 35:
+                i--;
+                _context.next = 24;
+                break;
+
+              case 38:
+                _i = level.entities.length - 1;
+
+              case 39:
+                if (!(_i >= 0)) {
+                  _context.next = 53;
+                  break;
+                }
+
+                _entity = level.entities[_i]; // get its position
+
+                _x = _entity.x, _y = _entity.y; // get the parent level at that position
+
+                parentLevel = level.getParent();
+
+                if (parentLevel) {
+                  _context.next = 45;
+                  break;
+                }
+
+                return _context.abrupt("continue", 50);
+
+              case 45:
+                // remove the entity from the level
+                level.entities.splice(_i, 1); // change coordinates to the parent level
+
+                _entity.x = _x + parentLevel.x;
+                _entity.y = _y + parentLevel.y; // add the entity to the parent level
+
+                parentLevel.entities.push(_entity);
+
+                if (_entity.isPlayer) {
+                  parentLevel.deactiveChild();
+                }
+
+              case 50:
+                _i--;
+                _context.next = 39;
+                break;
+
+              case 53:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[4, 17, 20, 23]]);
+      }));
+
+      function takeTurn() {
+        return _takeTurn.apply(this, arguments);
+      }
+
+      return takeTurn;
+    }()
+  }, {
+    key: "start",
+    value: function start() {
+      throw new Error('Method not implemented.');
+    }
+  }, {
+    key: "end",
+    value: function end() {
+      throw new Error('Method not implemented.');
+    }
+  }]);
+
+  return Session;
+}();
+
 var Player = /*#__PURE__*/function () {
   function Player(name, x, y) {
     _classCallCheck(this, Player);
@@ -863,4 +1106,13 @@ var Monster = /*#__PURE__*/function () {
   return Monster;
 }();
 
-export { Item, Level, Monster, Player, Tile };
+var Breed = /*#__PURE__*/_createClass(function Breed(name, maxHealth, items, loot) {
+  _classCallCheck(this, Breed);
+
+  this.name = name;
+  this.maxHealth = maxHealth;
+  this.items = items;
+  this.loot = loot;
+});
+
+export { Breed, Item, Level, Monster, Player, Session, Tile, TileType };

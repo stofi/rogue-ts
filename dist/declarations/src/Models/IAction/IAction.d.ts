@@ -1,4 +1,6 @@
 import type IActionResult from './IActionResult';
+import type IEntity from '../IEntity';
 export default interface IAction {
-    use: () => IActionResult;
+    name: string;
+    use: (actor?: IEntity) => IActionResult;
 }

@@ -2,6 +2,7 @@ import { Session, Level } from '@/Game'
 import type { IPlayer, IAction } from '@/Models'
 
 const dummyAction: IAction = {
+  name: 'dummy action',
   use() {
     return {
       success: true,
@@ -12,7 +13,7 @@ const dummyLevel = new Level(10, 10, [])
 const dummyPlayer: IPlayer = {
   isAlive: true,
   isPlayer: true,
-  name: 'dummy',
+  name: 'dummy player',
   x: 0,
   y: 0,
   takeTurn: async () => dummyAction,

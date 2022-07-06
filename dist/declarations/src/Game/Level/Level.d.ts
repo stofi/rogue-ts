@@ -29,7 +29,8 @@ export default class Level implements ILevel {
      */
     getActiveChildStack(): ILevel[];
     getDeepestActiveChild(): ILevel | undefined;
-    getTile(x: number, y: number): ITile;
+    getTile(x: number, y: number, deep?: boolean): ITile | undefined;
+    setTile(x: number, y: number, tile: ITile, deep?: boolean): void;
     getChildAt(x: number, y: number): ILevel | undefined;
     addChild(x: number, y: number, level: ILevel): void;
     getTileContent(x: number, y: number): ITileContent | undefined;
