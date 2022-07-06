@@ -4,15 +4,13 @@ import type {
   IBreed,
   IPlayer,
   IMonster,
-  IDrop,
   IItem,
   ILevel,
   ITile,
-  IChildLevel,
   ITileContent,
 } from './Models'
 
-import { Level, Drop, Monster, Player, Tile, Item } from './Game'
+import { Level, Monster, Player, Tile, Item } from './Game'
 
 export type {
   IAction,
@@ -20,12 +18,10 @@ export type {
   IBreed,
   IPlayer,
   IMonster,
-  IDrop,
   IItem,
-  ILevel,
   ITile,
-  IChildLevel,
+  ILevel,
   ITileContent,
 }
 
-export { Level, Drop, Monster, Player, Tile, Item }
+export { Level, Monster, Player, Tile, Item }

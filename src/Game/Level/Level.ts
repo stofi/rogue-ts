@@ -1,16 +1,14 @@
-import type {
-  ILevel,
-  IChildLevel,
-  ITileContent,
-  ITile,
-  IEntity,
-} from '~/Models'
+import type { ILevel, ITileContent, ITile, IEntity } from '~/Models'
 
 export default class Level implements ILevel {
   width: number
   height: number
-  children: IChildLevel[] = []
+  active = false
+  x = 0
+  y = 0
+  children: ILevel[] = []
   entities: IEntity[] = []
+  parent = undefined as ILevel | undefined
   constructor(width: number, height: number, public tiles: ITile[]) {
     if (width < 1) {
       throw new Error('width must be greater than 0')
@@ -21,8 +19,27 @@ export default class Level implements ILevel {
     this.width = width
     this.height = height
   }
+  public translateForChild(
+    x: number,
+    y: number,
+    child: ILevel
+  ): { x: number; y: number } {
+    if (child.parent !== this) {
+      throw new Error('child is not a child of this level')
+    }
+    return {
+      x: x + child.x,
+      y: y + child.y,
+    }
+  }
+  public translateForParent(x: number, y: number): { x: number; y: number } {
+    if (!this.parent) {
+      return { x, y }
+    }
+    return this.parent.translateForChild(x, y, this)
+  }
 
-  public get activeChild(): IChildLevel | undefined {
+  public get activeChild(): ILevel | undefined {
     for (const child of this.children) {
       if (child.active) {
         return child
@@ -30,7 +47,7 @@ export default class Level implements ILevel {
     }
     return undefined
   }
-  public set activeChild(child: IChildLevel | undefined) {
+  public set activeChild(child: ILevel | undefined) {
     for (const c of this.children) {
       c.active = c === child
     }
@@ -44,6 +61,10 @@ export default class Level implements ILevel {
     }
   }
 
+  public getParent(): ILevel | undefined {
+    return this.parent
+  }
+
   /**
    * Return an array of all active child levels, in order of their appearance in the
    * tree.
@@ -53,11 +74,16 @@ export default class Level implements ILevel {
     const stack: ILevel[] = []
     for (const child of this.children) {
       if (child.active) {
-        stack.push(child.level)
-        stack.push(...child.level.getActiveChildStack())
+        stack.push(child)
+        stack.push(...child.getActiveChildStack())
       }
     }
     return stack
+  }
+
+  public getDeepestActiveChild(): ILevel | undefined {
+    const stack = this.getActiveChildStack()
+    return stack.length ? stack[stack.length - 1] : this
   }
 
   public getTile(x: number, y: number): ITile {
@@ -70,13 +96,13 @@ export default class Level implements ILevel {
     return this.tiles[y * this.width + x]
   }
 
-  public getChildAt(x: number, y: number): IChildLevel | undefined {
+  public getChildAt(x: number, y: number): ILevel | undefined {
     for (const child of this.children) {
       if (
         x >= child.x &&
-        x < child.x + child.w &&
+        x < child.x + child.width &&
         y >= child.y &&
-        y < child.y + child.h
+        y < child.y + child.height
       ) {
         return child
       }
@@ -85,35 +111,32 @@ export default class Level implements ILevel {
   }
 
   public addChild(x: number, y: number, level: ILevel): void {
+    // TODO: Make sure children cant be placed at the edges of the level. That way we dont have to think about transiting entities accross multiple levels, assuming we also disallow moves greater than one tile.
+
     const width = level.width
     const height = level.height
-    // x must be >= 0 and x + width must be <= this.width
-    if (x < 0 || x + width > this.width) {
-      throw new Error('x must be between 0 and width')
+    // x must be > 0 and x + width must be < this.width
+    if (x < 1 || x + width > this.width - 1) {
+      throw new Error('x must be between 1 and width - 1')
     }
-    // y must be >= 0 and y + height must be <= this.height
-    if (y < 0 || y + height > this.height) {
-      throw new Error('y must be between 0 and height')
+    // y must be > 0 and y + height must be < this.height
+    if (y < 1 || y + height > this.height - 1) {
+      throw new Error('y must be between 1 and height - 1')
     }
     const otherChildLevelAtTile = this.getChildAt(x, y)
     if (otherChildLevelAtTile) {
       throw new Error('cannot add child at tile that already has a child')
     }
-    console.log('adding child', level)
-    this.children.push({
-      x,
-      y,
-      w: width,
-      h: height,
-      level,
-      active: false,
-    })
+    level.parent = this
+    level.x = x
+    level.y = y
+    this.children.push(level)
   }
 
   public getTileContent(x: number, y: number): ITileContent | undefined {
     const child = this.getChildAt(x, y)
     if (child) {
-      return child.level.getTileContent(x - child.x, y - child.y)
+      return child.getTileContent(x - child.x, y - child.y)
     }
     // entities
     const tile = this.getTile(x, y)

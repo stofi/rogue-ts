@@ -1,7 +1,7 @@
 import type ILevel from './ILevel'
 
-import type { IChildLevel, ITileContent } from './ILevel'
+import type { ILevel, ITileContent } from './ILevel'
 
 export default ILevel
 
-export { ILevel, IChildLevel, ITileContent }
+export { ILevel, ILevel, ITileContent }
