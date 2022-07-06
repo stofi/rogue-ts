@@ -2,6 +2,7 @@ import type IPlayer from './IEntity/IPlayer'
 import type IMonster from './IEntity/IMonster'
 import type IItem from './IItem'
 import type ILevel from './ILevel'
+import type ISession from './ISession'
 import type { ITileContent } from './ILevel'
 
 import type ITile from './ITile'
@@ -19,4 +20,5 @@ export type {
   ITile,
   ILevel,
   ITileContent,
+  ISession,
 }

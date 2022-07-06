@@ -1,6 +1,6 @@
-import type { ILevel, IPlayer } from '~/Models'
+import type { ILevel, IPlayer, ISession } from '~/Models'
 
-export default class Session {
+export default class Session implements ISession {
   constructor(public root: ILevel, public player: IPlayer) {
     if (!root) {
       throw new Error('level must be provided')
@@ -9,7 +9,7 @@ export default class Session {
   }
 
   public get activeLevel() {
-    return this.root.getDeepestActiveChild()
+    return this.root.getDeepestActiveChild() ?? this.root
   }
 
   /**

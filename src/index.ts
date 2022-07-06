@@ -8,6 +8,7 @@ import type {
   ILevel,
   ITile,
   ITileContent,
+  ISession,
 } from './Models'
 
 import { Level, Monster, Player, Tile, Item } from './Game'
@@ -22,6 +23,7 @@ export type {
   ITile,
   ILevel,
   ITileContent,
+  ISession,
 }
 
 export { Level, Monster, Player, Tile, Item }
