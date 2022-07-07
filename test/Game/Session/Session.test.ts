@@ -1,6 +1,9 @@
 import { Session, Level } from '@/Game'
-import type { IPlayer, IAction } from '@/Models'
+import type { IPlayer, IAction, ILevelType } from '@/Models'
 
+const dummyLevelType: ILevelType = {
+  name: 'dummy level type',
+}
 const dummyAction: IAction = {
   name: 'dummy action',
   use() {
@@ -9,7 +12,7 @@ const dummyAction: IAction = {
     }
   },
 }
-const dummyLevel = new Level(10, 10, [])
+const dummyLevel = new Level(10, 10, [], dummyLevelType)
 const dummyPlayer: IPlayer = {
   isAlive: true,
   isPlayer: true,

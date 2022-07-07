@@ -1,8 +1,12 @@
 import { Level } from '@/Game'
-import type { ITile, ITileType, ITileContent } from '@/Models'
+import type { ITile, ITileType, ITileContent, ILevelType } from '@/Models'
 
+const dummyLevelType: ILevelType = {
+  name: 'dummy level type',
+}
 const dummyTileType: ITileType = {
   name: 'dummy',
+  passable: true,
 }
 const dummyTile: ITile = {
   type: dummyTileType,
@@ -14,53 +18,56 @@ const dummyTileContent: ITileContent = {
   y: 0,
 }
 
+const getLevel = (): Level => new Level(10, 10, [], dummyLevelType)
+const getChildLevel = (): Level => new Level(4, 5, [], dummyLevelType)
+
 describe('testing Level', () => {
   test('it should import', () => {
     const result = 0
     expect(result).toBe(0)
   })
   test('it should construct', () => {
-    const level = new Level(10, 10, [])
+    const level = getLevel()
     expect(level).toBeInstanceOf(Level)
   })
   test('it should have a width', () => {
-    const level = new Level(10, 10, [])
+    const level = getLevel()
     expect(level.width).toBe(10)
   })
   test('it should have a height', () => {
-    const level = new Level(10, 10, [])
+    const level = getLevel()
     expect(level.height).toBe(10)
   })
   test('it should have tiles', () => {
-    const level = new Level(10, 10, [])
+    const level = getLevel()
     expect(level.tiles).toBeInstanceOf(Array)
   })
   test('it should not construct with no width', () => {
     expect(() => {
-      const level = new Level(0, 10, [])
+      const level = new Level(0, 10, [], dummyLevelType)
     }).toThrow()
   })
   test('it should not construct with no height', () => {
     expect(() => {
-      const level = new Level(10, 0, [])
+      const level = new Level(10, 0, [], dummyLevelType)
     }).toThrow()
   })
   test('it should not add child out of bounds', () => {
-    const level = new Level(10, 10, [])
+    const level = getLevel()
     expect(() => {
-      level.addChild(-1, -1, new Level(10, 10, []))
+      level.addChild(-1, -1, getLevel())
     }).toThrow()
     expect(() => {
-      level.addChild(10, 10, new Level(10, 10, []))
+      level.addChild(10, 10, getLevel())
     }).toThrow()
   })
   test('it should not add child in the border', () => {
-    const level = new Level(10, 10, [])
+    const level = getLevel()
     expect(() => {
-      level.addChild(0, 0, new Level(10, 10, []))
+      level.addChild(0, 0, getLevel())
     }).toThrow()
     expect(() => {
-      level.addChild(9, 9, new Level(1, 1, []))
+      level.addChild(9, 9, new Level(1, 1, [], dummyLevelType))
     }).toThrow()
   })
   //    0 2  5    9
@@ -83,8 +90,8 @@ describe('testing Level', () => {
     const childY = 3
     const x = 5
     const y = 7
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(childX, childY, childLevel)
     const result = level.translateForChild(x, y, childLevel)
     expect(result).toEqual({ x: 3, y: 4 })
@@ -96,8 +103,8 @@ describe('testing Level', () => {
     const childY = 3
     const x = 3
     const y = 4
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(childX, childY, childLevel)
     const result = childLevel.translateForParent(x, y)
     expect(result).toEqual({ x: 5, y: 7 })
@@ -105,16 +112,16 @@ describe('testing Level', () => {
 
   // get activeChild
   test('it should get activeChild', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     level.activeChild = childLevel
     expect(level.activeChild).toBe(childLevel)
   })
   // set activeChild
   test('it should set activeChild', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     level.activeChild = childLevel
     expect(level.activeChild).toBe(childLevel)
@@ -122,8 +129,8 @@ describe('testing Level', () => {
 
   // deactiveChild
   test('it should deactiveChild', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     level.activeChild = childLevel
     level.deactiveChild()
@@ -131,31 +138,31 @@ describe('testing Level', () => {
   })
   // getParent
   test('it should getParent', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     expect(childLevel.getParent()).toBe(level)
   })
   // getActiveChildStack
   test('it should getActiveChildStack', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     level.activeChild = childLevel
     expect(level.getActiveChildStack()).toEqual([childLevel])
   })
   // getDeepestActiveChild
   test('it should getDeepestActiveChild', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     level.activeChild = childLevel
     expect(level.getDeepestActiveChild()).toBe(childLevel)
   })
   // getTile
   test('it should set and get tiles', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
 
     level.addChild(1, 1, childLevel)
     expect(level.getTile(1, 1)).toBe(undefined)
@@ -169,15 +176,15 @@ describe('testing Level', () => {
 
   // getChildAt
   test('it should add and get Child At', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     expect(level.getChildAt(1, 1)).toBe(childLevel)
   })
   // getTileContent
   test('it should getTileContent', () => {
-    const level = new Level(10, 10, [])
-    const childLevel = new Level(4, 5, [])
+    const level = getLevel()
+    const childLevel = getChildLevel()
     level.addChild(1, 1, childLevel)
     childLevel.setTile(0, 0, dummyTile)
     expect(level.getTileContent(1, 1)).toStrictEqual(dummyTileContent)

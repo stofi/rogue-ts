@@ -2,6 +2,7 @@ import { Item } from '@/Game'
 import type { IAction } from '@/Models'
 
 const dummyAction: IAction = {
+  name: 'dummy action',
   use: () => {
     return {
       success: true,

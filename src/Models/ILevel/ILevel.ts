@@ -1,5 +1,6 @@
 import type ITile from '../ITile'
 import type IEntity from '../IEntity'
+import type ILevelType from './ILevelType'
 
 export interface ITileContent {
   tile?: ITile
@@ -13,6 +14,7 @@ export default interface ILevel {
   readonly height: number
   x: number
   y: number
+  type: ILevelType
   active: boolean
   tiles: ITile[]
   entities: IEntity[]

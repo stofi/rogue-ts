@@ -10,6 +10,7 @@ import type {
   ITileContent,
   ISession,
   ITileType,
+  ILevelType,
 } from './Models'
 
 import {
@@ -21,6 +22,7 @@ import {
   Breed,
   TileType,
   Session,
+  LevelType,
 } from './Game'
 
 export type {
@@ -35,6 +37,17 @@ export type {
   ITileContent,
   ISession,
   ITileType,
+  ILevelType,
 }
 
-export { Level, Monster, Player, Tile, Item, Breed, TileType, Session }
+export {
+  Level,
+  Monster,
+  Player,
+  Tile,
+  Item,
+  Breed,
+  TileType,
+  Session,
+  LevelType,
+}

@@ -1,4 +1,4 @@
-import type { ILevel, ITileContent, ITile, IEntity } from '~/Models'
+import type { ILevel, ITileContent, ITile, IEntity, ILevelType } from '~/Models'
 
 export default class Level implements ILevel {
   width: number
@@ -9,7 +9,12 @@ export default class Level implements ILevel {
   children: ILevel[] = []
   entities: IEntity[] = []
   parent = undefined as ILevel | undefined
-  constructor(width: number, height: number, public tiles: ITile[]) {
+  constructor(
+    width: number,
+    height: number,
+    public tiles: ITile[],
+    public type: ILevelType
+  ) {
     if (width < 1) {
       throw new Error('width must be greater than 0')
     }
