@@ -6,7 +6,12 @@ const dummyBreed: IBreed = {
   maxHealth: 10,
   items: [],
   loot: [],
+  spawn: () => {
+    throw new Error('Method not implemented.')
+  },
 }
+
+const getMonster = () => new Monster('dummy monster', 0, 0, dummyBreed)
 
 describe('testing Monster', () => {
   test('it should import', () => {
@@ -22,23 +27,23 @@ describe('testing Monster', () => {
     expect(result).toBe('Monster')
   })
   test('it should construct with breed', () => {
-    const monster = new Monster('monster', 0, 0, dummyBreed)
+    const monster = getMonster()
     expect(monster).toBeInstanceOf(Monster)
   })
   test('it should have a name', () => {
-    const monster = new Monster('monster', 0, 0, dummyBreed)
-    expect(monster.name).toBe('monster')
+    const monster = getMonster()
+    expect(monster.name).toBe('dummy monster')
   })
   test('it should have a health', () => {
-    const monster = new Monster('monster', 0, 0, dummyBreed)
+    const monster = getMonster()
     expect(monster.health).toBe(0)
   })
   test('it should have a breed', () => {
-    const monster = new Monster('monster', 0, 0, dummyBreed)
+    const monster = getMonster()
     expect(monster.breed).toBe(dummyBreed)
   })
   test('it is not a player', () => {
-    const monster = new Monster('monster', 0, 0, dummyBreed)
+    const monster = getMonster()
     expect(monster.isPlayer).toBe(false)
   })
 })

@@ -11,6 +11,8 @@ import type {
   ISession,
   ITileType,
   ILevelType,
+  ILevelBreedDictionary,
+  ILevelTileTypeDictionary,
 } from './Models'
 
 import {
@@ -38,6 +40,8 @@ export type {
   ISession,
   ITileType,
   ILevelType,
+  ILevelBreedDictionary,
+  ILevelTileTypeDictionary,
 }
 
 export {

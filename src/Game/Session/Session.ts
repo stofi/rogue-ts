@@ -1,4 +1,4 @@
-import type { ILevel, IPlayer, ISession } from '~/Models'
+import type { ILevel, IPlayer, ISession } from '@/Models'
 
 export default class Session implements ISession {
   constructor(public root: ILevel, public player: IPlayer) {

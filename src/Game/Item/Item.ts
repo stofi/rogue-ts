@@ -1,4 +1,4 @@
-import type { IAction, IItem } from '~/Models'
+import type { IAction, IItem } from '@/Models'
 
 // TODO: Implement Typed Object?
 

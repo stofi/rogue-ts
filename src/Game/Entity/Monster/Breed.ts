@@ -1,4 +1,4 @@
-import type { IBreed, IItem } from '~/Models'
+import type { IBreed, IItem, IMonster } from '@/Models'
 
 export default class Breed implements IBreed {
   constructor(
@@ -7,4 +7,7 @@ export default class Breed implements IBreed {
     public items: IItem[],
     public loot: IItem[]
   ) {}
+  spawn(monster: IMonster): void {
+    monster.health = this.maxHealth
+  }
 }

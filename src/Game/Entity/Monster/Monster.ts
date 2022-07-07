@@ -1,4 +1,4 @@
-import type { IAction, IBreed, IMonster, ILevel } from '~/Models'
+import type { IAction, IBreed, IMonster, ILevel } from '@/Models'
 
 export default class Monster implements IMonster {
   isPlayer = false
@@ -13,6 +13,9 @@ export default class Monster implements IMonster {
     if (name.length < 1) {
       throw new Error('name must be at least 1 character long')
     }
+  }
+  spawn(): void {
+    this.breed.spawn(this)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

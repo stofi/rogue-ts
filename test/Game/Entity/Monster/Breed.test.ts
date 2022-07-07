@@ -1,4 +1,6 @@
-import { Breed } from '@/Game'
+import { Breed, Monster } from '@/Game'
+
+const getBreed = () => new Breed('name', 1, [], [])
 
 describe('testing Breed', () => {
   test('it should import', () => {
@@ -14,23 +16,34 @@ describe('testing Breed', () => {
     expect(result).toBe('Breed')
   })
   test('it should construct', () => {
-    const result = new Breed('name', 1, [], [])
+    const result = getBreed()
     expect(result).toBeInstanceOf(Breed)
   })
   test('it should have a name', () => {
-    const result = new Breed('name', 1, [], [])
+    const result = getBreed()
     expect(result.name).toBe('name')
   })
   test('it should have a maxHealth', () => {
-    const result = new Breed('name', 1, [], [])
+    const result = getBreed()
     expect(result.maxHealth).toBe(1)
   })
   test('it should have items', () => {
-    const result = new Breed('name', 1, [], [])
+    const result = getBreed()
     expect(result.items).toBeInstanceOf(Array)
   })
   test('it should have loot', () => {
-    const result = new Breed('name', 1, [], [])
+    const result = getBreed()
     expect(result.loot).toBeInstanceOf(Array)
+  })
+  test('it should have a spawn function', () => {
+    const result = getBreed()
+    expect(result.spawn).toBeInstanceOf(Function)
+  })
+
+  test('it should set the monsters health after spawn', () => {
+    const result = getBreed()
+    const monster = new Monster('name', 0, 0, result)
+    result.spawn(monster)
+    expect(monster.health).toBe(1)
   })
 })

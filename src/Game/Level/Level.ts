@@ -1,4 +1,4 @@
-import type { ILevel, ITileContent, ITile, IEntity, ILevelType } from '~/Models'
+import type { ILevel, ITileContent, ITile, IEntity, ILevelType } from '@/Models'
 
 export default class Level implements ILevel {
   width: number
@@ -9,12 +9,8 @@ export default class Level implements ILevel {
   children: ILevel[] = []
   entities: IEntity[] = []
   parent = undefined as ILevel | undefined
-  constructor(
-    width: number,
-    height: number,
-    public tiles: ITile[],
-    public type: ILevelType
-  ) {
+  tiles: Array<ITile | undefined>
+  constructor(width: number, height: number, public type: ILevelType) {
     if (width < 1) {
       throw new Error('width must be greater than 0')
     }
@@ -23,6 +19,52 @@ export default class Level implements ILevel {
     }
     this.width = width
     this.height = height
+    this.tiles = new Array(width * height)
+  }
+
+  static boundsError = new Error('coordinates are out of bounds')
+
+  public boundsGuard(x: number, y: number, offset = 0): boolean {
+    return (
+      x < offset ||
+      x >= this.width - offset ||
+      y < offset ||
+      y >= this.height - offset
+    )
+  }
+  public generate(): void {
+    this.type.generate(this)
+  }
+
+  public placeEntity(
+    x: number,
+    y: number,
+    entity: IEntity,
+    deep = false
+  ): void {
+    if (this.boundsGuard(x, y)) {
+      throw Level.boundsError
+    }
+    // is target in a child level?
+    const child = this.getChildAt(x, y)
+    if (child) {
+      if (deep) {
+        child.placeEntity(x - child.x, y - child.y, entity, deep)
+      } else {
+        throw new Error(
+          'cannot place entity in a child level without `deep = true`'
+        )
+      }
+    } else {
+      this.entities.push(entity)
+    }
+  }
+  public removeEntity(entity: IEntity): void {
+    const index = this.entities.indexOf(entity)
+    if (index === -1) {
+      throw new Error('entity is not in this level')
+    }
+    this.entities.splice(index, 1)
   }
   public translateForChild(
     x: number,
@@ -95,11 +137,8 @@ export default class Level implements ILevel {
   }
 
   public getTile(x: number, y: number, deep = false): ITile | undefined {
-    if (x < 0 || x >= this.width) {
-      throw new Error('x must be between 0 and width')
-    }
-    if (y < 0 || y >= this.height) {
-      throw new Error('y must be between 0 and height')
+    if (this.boundsGuard(x, y)) {
+      throw Level.boundsError
     }
     // is target in a child level?
     const child = this.getChildAt(x, y)
@@ -113,17 +152,19 @@ export default class Level implements ILevel {
   }
 
   public setTile(x: number, y: number, tile: ITile, deep = false): void {
-    if (x < 0 || x >= this.width) {
-      throw new Error('x must be between 0 and width')
-    }
-    if (y < 0 || y >= this.height) {
-      throw new Error('y must be between 0 and height')
+    // throw if out of bounds
+    if (this.boundsGuard(x, y)) {
+      throw Level.boundsError
     }
     // is target in a child level?
     const child = this.getChildAt(x, y)
     if (child) {
       if (deep) {
         child.setTile(x - child.x, y - child.y, tile, deep)
+      } else {
+        throw new Error(
+          'cannot place tile in a child level without `deep = true`'
+        )
       }
     } else {
       this.tiles[y * this.width + x] = tile

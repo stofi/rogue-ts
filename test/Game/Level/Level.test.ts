@@ -3,6 +3,11 @@ import type { ITile, ITileType, ITileContent, ILevelType } from '@/Models'
 
 const dummyLevelType: ILevelType = {
   name: 'dummy level type',
+  breeds: [],
+  tileTypes: [],
+  generate: () => {
+    //
+  },
 }
 const dummyTileType: ITileType = {
   name: 'dummy',
@@ -18,8 +23,8 @@ const dummyTileContent: ITileContent = {
   y: 0,
 }
 
-const getLevel = (): Level => new Level(10, 10, [], dummyLevelType)
-const getChildLevel = (): Level => new Level(4, 5, [], dummyLevelType)
+const getLevel = (): Level => new Level(10, 10, dummyLevelType)
+const getChildLevel = (): Level => new Level(4, 5, dummyLevelType)
 
 describe('testing Level', () => {
   test('it should import', () => {
@@ -44,12 +49,12 @@ describe('testing Level', () => {
   })
   test('it should not construct with no width', () => {
     expect(() => {
-      const level = new Level(0, 10, [], dummyLevelType)
+      const level = new Level(0, 10, dummyLevelType)
     }).toThrow()
   })
   test('it should not construct with no height', () => {
     expect(() => {
-      const level = new Level(10, 0, [], dummyLevelType)
+      const level = new Level(10, 0, dummyLevelType)
     }).toThrow()
   })
   test('it should not add child out of bounds', () => {
@@ -67,7 +72,7 @@ describe('testing Level', () => {
       level.addChild(0, 0, getLevel())
     }).toThrow()
     expect(() => {
-      level.addChild(9, 9, new Level(1, 1, [], dummyLevelType))
+      level.addChild(9, 9, new Level(1, 1, dummyLevelType))
     }).toThrow()
   })
   //    0 2  5    9

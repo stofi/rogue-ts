@@ -1,4 +1,4 @@
-import type { IAction, IPlayer, ILevel } from '~/Models'
+import type { IAction, IPlayer, ILevel } from '@/Models'
 
 export default class Player implements IPlayer {
   isPlayer = true

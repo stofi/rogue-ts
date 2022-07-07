@@ -3,6 +3,11 @@ import type { IPlayer, IAction, ILevelType } from '@/Models'
 
 const dummyLevelType: ILevelType = {
   name: 'dummy level type',
+  breeds: [],
+  tileTypes: [],
+  generate: () => {
+    //
+  },
 }
 const dummyAction: IAction = {
   name: 'dummy action',
@@ -12,7 +17,7 @@ const dummyAction: IAction = {
     }
   },
 }
-const dummyLevel = new Level(10, 10, [], dummyLevelType)
+const dummyLevel = new Level(10, 10, dummyLevelType)
 const dummyPlayer: IPlayer = {
   isAlive: true,
   isPlayer: true,

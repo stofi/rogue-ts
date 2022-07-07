@@ -1,4 +1,4 @@
-import type { ILevel, IPlayer } from '~/Models'
+import type { ILevel, IPlayer } from '@/Models'
 
 export default interface ISession {
   readonly activeLevel: ILevel
