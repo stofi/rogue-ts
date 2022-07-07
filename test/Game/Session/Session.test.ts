@@ -5,6 +5,7 @@ const dummyLevelType: ILevelType = {
   name: 'dummy level type',
   breeds: [],
   tileTypes: [],
+  maxMonsters: 0,
   generate: () => {
     //
   },

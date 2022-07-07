@@ -1,6 +1,10 @@
 import type ITile from '../ITile'
 import type IEntity from '../IEntity'
 import type ILevelType from './ILevelType'
+import type {
+  ILevelTileTypeDictionary,
+  ILevelBreedDictionary,
+} from './ILevelType'
 
 export interface ITileContent {
   tile?: ITile
@@ -21,6 +25,9 @@ export default interface ILevel {
   children: ILevel[]
   activeChild: ILevel | undefined
   parent: ILevel | undefined
+  monsterCount: number
+  tileDictionary: ILevelTileTypeDictionary
+  breedDictionary: ILevelBreedDictionary
   getParent(): ILevel | undefined
   getTile(x: number, y: number, deep?: boolean): ITile | undefined
   setTile(x: number, y: number, tile: ITile, deep?: boolean): void

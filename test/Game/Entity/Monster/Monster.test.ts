@@ -9,6 +9,9 @@ const dummyBreed: IBreed = {
   spawn: () => {
     throw new Error('Method not implemented.')
   },
+  takeTurn: () => {
+    throw new Error('Method not implemented.')
+  },
 }
 
 const getMonster = () => new Monster('dummy monster', 0, 0, dummyBreed)

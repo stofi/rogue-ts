@@ -4,6 +4,8 @@ import type {
   ITile,
   IEntity,
   ILevelType,
+  ILevelBreedDictionary,
+  ILevelTileTypeDictionary,
 } from '../../Models'
 
 export default class Level implements ILevel {
@@ -16,6 +18,7 @@ export default class Level implements ILevel {
   entities: IEntity[] = []
   parent = undefined as ILevel | undefined
   tiles: Array<ITile | undefined>
+  monsterCount = 0
   constructor(width: number, height: number, public type: ILevelType) {
     if (width < 1) {
       throw new Error('width must be greater than 0')
@@ -27,6 +30,8 @@ export default class Level implements ILevel {
     this.height = height
     this.tiles = new Array(width * height)
   }
+  tileDictionary: ILevelTileTypeDictionary = []
+  breedDictionary: ILevelBreedDictionary = []
 
   static boundsError = new Error('coordinates are out of bounds')
 

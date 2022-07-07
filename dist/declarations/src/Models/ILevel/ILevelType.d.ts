@@ -10,8 +10,9 @@ export declare type ILevelBreedDictionary = Array<{
     maxSpawns: number;
 }>;
 export default interface ILevelType {
-    name: string;
-    tileTypes: ILevelTileTypeDictionary;
-    breeds: ILevelBreedDictionary;
+    readonly name: string;
+    readonly tileTypes: ILevelTileTypeDictionary;
+    readonly breeds: ILevelBreedDictionary;
+    readonly maxMonsters: number;
     generate(level: ILevel): void;
 }

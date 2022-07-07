@@ -1,4 +1,4 @@
-import type { ILevel, ITileContent, ITile, IEntity, ILevelType } from '../../Models';
+import type { ILevel, ITileContent, ITile, IEntity, ILevelType, ILevelBreedDictionary, ILevelTileTypeDictionary } from '../../Models';
 export default class Level implements ILevel {
     type: ILevelType;
     width: number;
@@ -10,7 +10,10 @@ export default class Level implements ILevel {
     entities: IEntity[];
     parent: ILevel | undefined;
     tiles: Array<ITile | undefined>;
+    monsterCount: number;
     constructor(width: number, height: number, type: ILevelType);
+    tileDictionary: ILevelTileTypeDictionary;
+    breedDictionary: ILevelBreedDictionary;
     static boundsError: Error;
     boundsGuard(x: number, y: number, offset?: number): boolean;
     generate(): void;

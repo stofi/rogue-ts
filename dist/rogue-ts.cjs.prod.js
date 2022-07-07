@@ -148,6 +148,12 @@ var Level = /*#__PURE__*/function () {
 
     _defineProperty(this, "parent", undefined);
 
+    _defineProperty(this, "monsterCount", 0);
+
+    _defineProperty(this, "tileDictionary", []);
+
+    _defineProperty(this, "breedDictionary", []);
+
     this.type = type;
 
     if (width < 1) {
@@ -453,62 +459,121 @@ var Level = /*#__PURE__*/function () {
 
 _defineProperty(Level, "boundsError", new Error('coordinates are out of bounds'));
 
+var randomInt = function randomInt() {
+  var max = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
+  return Math.floor(Math.random() * max);
+};
+
 var LevelType = /*#__PURE__*/function () {
-  function LevelType(name, tileTypes, breeds) {
+  function LevelType(name, tileTypes, breeds, maxMonsters) {
     _classCallCheck(this, LevelType);
 
     this.name = name;
     this.tileTypes = tileTypes;
     this.breeds = breeds;
+    this.maxMonsters = maxMonsters;
   }
 
   _createClass(LevelType, [{
     key: "generate",
     value: function generate(level) {
+      level.tileDictionary = this.tileTypes.map(function (tileType) {
+        return {
+          type: tileType.type
+        };
+      });
+      level.breedDictionary = this.breeds.map(function (breed) {
+        return {
+          breed: breed.breed,
+          maxSpawns: breed.maxSpawns,
+          spawnChance: breed.spawnChance
+        };
+      });
       this.placeTiles(level);
       this.placeMonsters(level);
     }
   }, {
     key: "placeTiles",
     value: function placeTiles(level) {
-      // place random tiles
+      // border level with walls
       for (var x = 0; x < level.width; x++) {
-        for (var y = 0; y < level.height; y++) {
-          var content = level.getTileContent(x, y);
-          if (!content) throw new Error('Tile not found');
-          if (content.tile) continue;
-          var tileType = this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)];
-          var tile = new Tile(tileType.type);
-          level.setTile(x, y, tile);
+        var tile = this.getObstacleTile(level);
+        level.setTile(x, 0, tile);
+        level.setTile(x, level.height - 1, tile);
+      }
+
+      for (var y = 0; y < level.height; y++) {
+        var _tile = this.getObstacleTile(level);
+
+        level.setTile(0, y, _tile);
+        level.setTile(level.width - 1, y, _tile);
+      } // fill level with floor
+
+
+      for (var _x = 1; _x < level.width - 1; _x++) {
+        for (var _y = 1; _y < level.height - 1; _y++) {
+          var _tile2 = this.getPassableTile(level);
+
+          level.setTile(_x, _y, _tile2);
         }
       }
+    }
+  }, {
+    key: "getObstacleTile",
+    value: function getObstacleTile(level) {
+      // get unpassble tiles from level tile dictionary
+      var unpassableTiles = level.tileDictionary.filter(function (tileType) {
+        return tileType.type.passable === false;
+      }); // get random tile from unpassable tiles
+
+      var randomTile = unpassableTiles[randomInt(unpassableTiles.length)];
+      return new Tile(randomTile.type);
+    }
+  }, {
+    key: "getPassableTile",
+    value: function getPassableTile(level) {
+      // get passable tiles from level tile dictionary
+      var passableTiles = level.tileDictionary.filter(function (tileType) {
+        return tileType.type.passable === true;
+      }); // get random tile from passable tiles
+
+      var randomTile = passableTiles[randomInt(passableTiles.length)];
+      return new Tile(randomTile.type);
     }
   }, {
     key: "placeMonsters",
     value: function placeMonsters(level) {
-      // place random monsters
-      for (var x = 0; x < level.width; x++) {
-        for (var y = 0; y < level.height; y++) {
-          // is there a tile at this position?
-          var content = level.getTileContent(x, y); // There is no tile; should not be possible
+      while (level.monsterCount < this.maxMonsters) {
+        var _level$getTileContent;
 
-          if (!content || !content.tile) throw new Error('Tile not found'); // Tile is not passable
+        var x = randomInt(level.width - 2) + 1;
+        var y = randomInt(level.height - 2) + 1;
+        var maxIters = 100; // while no entity at this position
 
-          if (!content.tile.type.passable) continue; // Tile is occupied
+        var entities = (_level$getTileContent = level.getTileContent(x, y)) === null || _level$getTileContent === void 0 ? void 0 : _level$getTileContent.entities;
 
-          if (content.entities.length) continue;
-          var monster = this.getMonster(x, y);
-          if (!monster) continue;
-          level.placeEntity(x, y, monster);
-          monster.spawn();
+        while (entities && entities.length > 0 && maxIters) {
+          var _level$getTileContent2;
+
+          x = randomInt(level.width);
+          y = randomInt(level.height);
+          entities = (_level$getTileContent2 = level.getTileContent(x, y)) === null || _level$getTileContent2 === void 0 ? void 0 : _level$getTileContent2.entities;
+          maxIters--;
         }
+
+        var monster = this.getMonster(x, y, level); // should not happen
+
+        level.monsterCount++;
+        if (!monster) continue;
+        level.placeEntity(x, y, monster);
+        monster.spawn();
       }
     }
   }, {
     key: "getMonster",
-    value: function getMonster(x, y) {
+    value: function getMonster(x, y, level) {
       // get all breeds from dictionary that have maxSpawns > 0
-      var breeds = this.breeds.filter(function (breed) {
+      var breeds = level.breedDictionary.filter(function (breed) {
         return breed.maxSpawns > 0;
       }); // get sum of all spanshChances
 
