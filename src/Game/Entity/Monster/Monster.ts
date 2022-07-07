@@ -1,4 +1,4 @@
-import type { IAction, IBreed, IMonster, ILevel } from '@/Models'
+import type { IAction, IBreed, IMonster, ILevel } from '../../../Models'
 
 export default class Monster implements IMonster {
   isPlayer = false
@@ -18,8 +18,7 @@ export default class Monster implements IMonster {
     this.breed.spawn(this)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async takeTurn(level: ILevel): Promise<IAction> {
-    throw new Error('Method not implemented.')
+    return this.breed.takeTurn(this, level)
   }
 }

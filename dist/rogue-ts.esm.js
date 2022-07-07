@@ -129,7 +129,7 @@ function _defineProperty(obj, key, value) {
 }
 
 var Level = /*#__PURE__*/function () {
-  function Level(width, height, tiles) {
+  function Level(width, height, type) {
     _classCallCheck(this, Level);
 
     _defineProperty(this, "active", false);
@@ -144,7 +144,7 @@ var Level = /*#__PURE__*/function () {
 
     _defineProperty(this, "parent", undefined);
 
-    this.tiles = tiles;
+    this.type = type;
 
     if (width < 1) {
       throw new Error('width must be greater than 0');
@@ -156,9 +156,54 @@ var Level = /*#__PURE__*/function () {
 
     this.width = width;
     this.height = height;
+    this.tiles = new Array(width * height);
   }
 
   _createClass(Level, [{
+    key: "boundsGuard",
+    value: function boundsGuard(x, y) {
+      var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      return x < offset || x >= this.width - offset || y < offset || y >= this.height - offset;
+    }
+  }, {
+    key: "generate",
+    value: function generate() {
+      this.type.generate(this);
+    }
+  }, {
+    key: "placeEntity",
+    value: function placeEntity(x, y, entity) {
+      var deep = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+      if (this.boundsGuard(x, y)) {
+        throw Level.boundsError;
+      } // is target in a child level?
+
+
+      var child = this.getChildAt(x, y);
+
+      if (child) {
+        if (deep) {
+          child.placeEntity(x - child.x, y - child.y, entity, deep);
+        } else {
+          throw new Error('cannot place entity in a child level without `deep = true`');
+        }
+      } else {
+        this.entities.push(entity);
+      }
+    }
+  }, {
+    key: "removeEntity",
+    value: function removeEntity(entity) {
+      var index = this.entities.indexOf(entity);
+
+      if (index === -1) {
+        throw new Error('entity is not in this level');
+      }
+
+      this.entities.splice(index, 1);
+    }
+  }, {
     key: "translateForChild",
     value: function translateForChild(x, y, child) {
       if (child.parent !== this) {
@@ -289,12 +334,8 @@ var Level = /*#__PURE__*/function () {
     value: function getTile(x, y) {
       var deep = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-      if (x < 0 || x >= this.width) {
-        throw new Error('x must be between 0 and width');
-      }
-
-      if (y < 0 || y >= this.height) {
-        throw new Error('y must be between 0 and height');
+      if (this.boundsGuard(x, y)) {
+        throw Level.boundsError;
       } // is target in a child level?
 
 
@@ -313,12 +354,9 @@ var Level = /*#__PURE__*/function () {
     value: function setTile(x, y, tile) {
       var deep = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
 
-      if (x < 0 || x >= this.width) {
-        throw new Error('x must be between 0 and width');
-      }
-
-      if (y < 0 || y >= this.height) {
-        throw new Error('y must be between 0 and height');
+      // throw if out of bounds
+      if (this.boundsGuard(x, y)) {
+        throw Level.boundsError;
       } // is target in a child level?
 
 
@@ -327,6 +365,8 @@ var Level = /*#__PURE__*/function () {
       if (child) {
         if (deep) {
           child.setTile(x - child.x, y - child.y, tile, deep);
+        } else {
+          throw new Error('cannot place tile in a child level without `deep = true`');
         }
       } else {
         this.tiles[y * this.width + x] = tile;
@@ -405,6 +445,101 @@ var Level = /*#__PURE__*/function () {
   }]);
 
   return Level;
+}();
+
+_defineProperty(Level, "boundsError", new Error('coordinates are out of bounds'));
+
+var LevelType = /*#__PURE__*/function () {
+  function LevelType(name, tileTypes, breeds) {
+    _classCallCheck(this, LevelType);
+
+    this.name = name;
+    this.tileTypes = tileTypes;
+    this.breeds = breeds;
+  }
+
+  _createClass(LevelType, [{
+    key: "generate",
+    value: function generate(level) {
+      this.placeTiles(level);
+      this.placeMonsters(level);
+    }
+  }, {
+    key: "placeTiles",
+    value: function placeTiles(level) {
+      // place random tiles
+      for (var x = 0; x < level.width; x++) {
+        for (var y = 0; y < level.height; y++) {
+          var content = level.getTileContent(x, y);
+          if (!content) throw new Error('Tile not found');
+          if (content.tile) continue;
+          var tileType = this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)];
+          var tile = new Tile(tileType.type);
+          level.setTile(x, y, tile);
+        }
+      }
+    }
+  }, {
+    key: "placeMonsters",
+    value: function placeMonsters(level) {
+      // place random monsters
+      for (var x = 0; x < level.width; x++) {
+        for (var y = 0; y < level.height; y++) {
+          // is there a tile at this position?
+          var content = level.getTileContent(x, y); // There is no tile; should not be possible
+
+          if (!content || !content.tile) throw new Error('Tile not found'); // Tile is not passable
+
+          if (!content.tile.type.passable) continue; // Tile is occupied
+
+          if (content.entities.length) continue;
+          var monster = this.getMonster(x, y);
+          if (!monster) continue;
+          level.placeEntity(x, y, monster);
+          monster.spawn();
+        }
+      }
+    }
+  }, {
+    key: "getMonster",
+    value: function getMonster(x, y) {
+      // get all breeds from dictionary that have maxSpawns > 0
+      var breeds = this.breeds.filter(function (breed) {
+        return breed.maxSpawns > 0;
+      }); // get sum of all spanshChances
+
+      var totalSpawnChance = breeds.reduce(function (total, breed) {
+        return total + breed.spawnChance;
+      }, 0); // if there are no breeds or totalSpawnChance is 0, return undefined
+
+      if (totalSpawnChance === 0) return undefined; // get random number between 0 and totalSpawnChance
+
+      var random = Math.random() * totalSpawnChance; // loop through breeds, accumulating spawnChance until random is reached
+
+      var currentSpawnChance = 0;
+
+      var _iterator = _createForOfIteratorHelper(breeds),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var breed = _step.value;
+          currentSpawnChance += breed.spawnChance;
+
+          if (random < currentSpawnChance) {
+            breed.maxSpawns--;
+            return new Monster('monster', x, y, breed.breed);
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    }
+  }]);
+
+  return LevelType;
 }();
 
 var Tile = /*#__PURE__*/_createClass(function Tile(type) {
@@ -818,19 +953,32 @@ function _asyncToGenerator(fn) {
 
 var Session = /*#__PURE__*/function () {
   function Session(root, player) {
+    var logging = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
     _classCallCheck(this, Session);
 
     this.root = root;
     this.player = player;
+    this.logging = logging;
 
     if (!root) {
       throw new Error('level must be provided');
     }
 
     this.root.entities.push(player);
-  }
+  } // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 
   _createClass(Session, [{
+    key: "log",
+    value: function log() {
+      if (this.logging) {
+        var _console;
+
+        (_console = console).log.apply(_console, arguments);
+      }
+    }
+  }, {
     key: "activeLevel",
     get: function get() {
       var _this$root$getDeepest;
@@ -879,7 +1027,7 @@ var Session = /*#__PURE__*/function () {
               case 10:
                 action = _context.sent;
                 result = action.use(_entity2);
-                console.log("".concat(_entity2.name, " used ").concat(action.name, " ").concat(result.success ? 'successfully' : 'unsuccessfully').concat(result.reason ? ": ".concat(result.reason) : ''));
+                this.log("".concat(_entity2.name, " used ").concat(action.name, " ").concat(result.success ? 'successfully' : 'unsuccessfully').concat(result.reason ? ": ".concat(result.reason) : ''));
 
               case 13:
                 _context.next = 6;
@@ -1074,10 +1222,14 @@ var Monster = /*#__PURE__*/function () {
     if (name.length < 1) {
       throw new Error('name must be at least 1 character long');
     }
-  } // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
+  }
 
   _createClass(Monster, [{
+    key: "spawn",
+    value: function spawn() {
+      this.breed.spawn(this);
+    }
+  }, {
     key: "takeTurn",
     value: function () {
       var _takeTurn = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(level) {
@@ -1085,14 +1237,14 @@ var Monster = /*#__PURE__*/function () {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                throw new Error('Method not implemented.');
+                return _context.abrupt("return", this.breed.takeTurn(this, level));
 
               case 1:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee);
+        }, _callee, this);
       }));
 
       function takeTurn(_x) {
@@ -1106,13 +1258,29 @@ var Monster = /*#__PURE__*/function () {
   return Monster;
 }();
 
-var Breed = /*#__PURE__*/_createClass(function Breed(name, maxHealth, items, loot) {
-  _classCallCheck(this, Breed);
+var Breed = /*#__PURE__*/function () {
+  function Breed(name, maxHealth, items, loot) {
+    _classCallCheck(this, Breed);
 
-  this.name = name;
-  this.maxHealth = maxHealth;
-  this.items = items;
-  this.loot = loot;
-});
+    this.name = name;
+    this.maxHealth = maxHealth;
+    this.items = items;
+    this.loot = loot;
+  }
 
-export { Breed, Item, Level, Monster, Player, Session, Tile, TileType };
+  _createClass(Breed, [{
+    key: "takeTurn",
+    value: function takeTurn(monster, level) {
+      throw new Error('Method not implemented.');
+    }
+  }, {
+    key: "spawn",
+    value: function spawn(monster) {
+      monster.health = this.maxHealth;
+    }
+  }]);
+
+  return Breed;
+}();
+
+export { Breed, Item, Level, LevelType, Monster, Player, Session, Tile, TileType };

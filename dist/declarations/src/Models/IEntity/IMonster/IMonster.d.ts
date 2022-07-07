@@ -3,4 +3,5 @@ import type IBreed from './IBreed';
 export default interface IMonster extends IEntity {
     health: number;
     breed: IBreed;
+    spawn(): void;
 }

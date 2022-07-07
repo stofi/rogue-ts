@@ -4,8 +4,8 @@ import {
   ILevelBreedDictionary,
   ILevelTileTypeDictionary,
   IMonster,
-} from '@/Models'
-import { Tile, Monster } from '@/Game'
+} from '../../Models'
+import { Tile, Monster } from '..'
 
 export default class LevelType implements ILevelType {
   constructor(
@@ -21,6 +21,9 @@ export default class LevelType implements ILevelType {
     // place random tiles
     for (let x = 0; x < level.width; x++) {
       for (let y = 0; y < level.height; y++) {
+        const content = level.getTileContent(x, y)
+        if (!content) throw new Error('Tile not found')
+        if (content.tile) continue
         const tileType =
           this.tileTypes[Math.floor(Math.random() * this.tileTypes.length)]
         const tile = new Tile(tileType.type)
@@ -41,12 +44,14 @@ export default class LevelType implements ILevelType {
         // Tile is occupied
         if (content.entities.length) continue
 
-        const monster = this.getMonster()
-        if (monster) level.placeEntity(x, y, monster)
+        const monster = this.getMonster(x, y)
+        if (!monster) continue
+        level.placeEntity(x, y, monster)
+        monster.spawn()
       }
     }
   }
-  getMonster(): IMonster | undefined {
+  getMonster(x: number, y: number): IMonster | undefined {
     // get all breeds from dictionary that have maxSpawns > 0
     const breeds = this.breeds.filter((breed) => breed.maxSpawns > 0)
     // get sum of all spanshChances
@@ -63,7 +68,8 @@ export default class LevelType implements ILevelType {
     for (const breed of breeds) {
       currentSpawnChance += breed.spawnChance
       if (random < currentSpawnChance) {
-        return new Monster('monster', 0, 0, breed.breed)
+        breed.maxSpawns--
+        return new Monster('monster', x, y, breed.breed)
       }
     }
   }

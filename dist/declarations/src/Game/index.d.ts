@@ -4,4 +4,5 @@ import Item from './Item';
 import Session from './Session';
 import { TileType } from './Tile';
 import { Player, Monster, Breed } from './Entity';
-export { Level, Tile, Item, Player, Monster, Breed, TileType, Session };
+import { LevelType } from './Level';
+export { Level, Tile, Item, Player, Monster, Breed, TileType, Session, LevelType, };

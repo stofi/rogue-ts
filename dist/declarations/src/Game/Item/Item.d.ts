@@ -1,4 +1,4 @@
-import type { IAction, IItem } from '~/Models';
+import type { IAction, IItem } from '../../Models';
 export default class Item implements IItem {
     name: string;
     drawAction?: IAction | undefined;

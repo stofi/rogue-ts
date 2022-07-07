@@ -1,4 +1,4 @@
-import ITypeType from './ITileType';
+import ITileType from './ITileType';
 export default interface ITile {
-    type: ITypeType;
+    type: ITileType;
 }

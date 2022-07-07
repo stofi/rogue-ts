@@ -1,4 +1,10 @@
-import type { ILevel, ITileContent, ITile, IEntity, ILevelType } from '@/Models'
+import type {
+  ILevel,
+  ITileContent,
+  ITile,
+  IEntity,
+  ILevelType,
+} from '../../Models'
 
 export default class Level implements ILevel {
   width: number

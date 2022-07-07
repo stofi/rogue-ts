@@ -1,6 +1,6 @@
-import type { ILevel, ITileContent, ITile, IEntity } from '~/Models';
+import type { ILevel, ITileContent, ITile, IEntity, ILevelType } from '../../Models';
 export default class Level implements ILevel {
-    tiles: ITile[];
+    type: ILevelType;
     width: number;
     height: number;
     active: boolean;
@@ -9,7 +9,13 @@ export default class Level implements ILevel {
     children: ILevel[];
     entities: IEntity[];
     parent: ILevel | undefined;
-    constructor(width: number, height: number, tiles: ITile[]);
+    tiles: Array<ITile | undefined>;
+    constructor(width: number, height: number, type: ILevelType);
+    static boundsError: Error;
+    boundsGuard(x: number, y: number, offset?: number): boolean;
+    generate(): void;
+    placeEntity(x: number, y: number, entity: IEntity, deep?: boolean): void;
+    removeEntity(entity: IEntity): void;
     translateForChild(x: number, y: number, child: ILevel): {
         x: number;
         y: number;

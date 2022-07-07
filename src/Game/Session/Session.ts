@@ -1,11 +1,22 @@
-import type { ILevel, IPlayer, ISession } from '@/Models'
+import type { ILevel, IPlayer, ISession } from '../../Models'
 
 export default class Session implements ISession {
-  constructor(public root: ILevel, public player: IPlayer) {
+  constructor(
+    public root: ILevel,
+    public player: IPlayer,
+    public logging = false
+  ) {
     if (!root) {
       throw new Error('level must be provided')
     }
     this.root.entities.push(player)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private log(...args: any[]) {
+    if (this.logging) {
+      console.log(...args)
+    }
   }
 
   public get activeLevel() {
@@ -23,7 +34,7 @@ export default class Session implements ISession {
     for (const entity of level.entities) {
       const action = await entity.takeTurn(level)
       const result = action.use(entity)
-      console.log(
+      this.log(
         `${entity.name} used ${action.name} ${
           result.success ? 'successfully' : 'unsuccessfully'
         }${result.reason ? `: ${result.reason}` : ''}`
